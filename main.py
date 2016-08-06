@@ -1,4 +1,4 @@
-from video_requester import VideoRequest
+from video_requester import VideoRequest, Video
 from emailer import Emailer
 
 CHANNEL_ID = ''  # Insert channel ID
@@ -24,16 +24,17 @@ for vid in videos:
 
 # Check that these videos have not already been notified for
 for vid in successes:
+    found = False
     if not already_checked:
         found = False
 
     for line in already_checked:
-        if vid.videoID in line:
+        if vid.video_id in line:
             found = True
             break
 
     # If the video has not already been checked, add it to the file and send an email notification
     if not found:
-        mailer.send_email(vid.videoID, vid.title)
+        mailer.send_email(vid.video_id, vid.title)
         with open("video_log.txt", "a+") as f:
-            f.write(vid.videoID + " " + vid.title + '\n')
+            f.write(vid.video_id + " " + vid.title + '\n')

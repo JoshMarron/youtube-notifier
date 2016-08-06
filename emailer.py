@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-
 import smtplib
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -44,32 +41,30 @@ class Emailer:
             """.format(link=link, title=title)
         return html
 
-    def format_text_link(self, videoId):
-        link = "http://youtube.com/watch?v=" + videoId
+    def format_text_link(self, video_id):
+        link = "http://youtube.com/watch?v=" + video_id
         text = "New episode of Zero Time Dilemma!\n" + link
         return text
 
-    def send_email(self, videoId, title=""):
+    def send_email(self, video_id, title=""):
 
         # Format the body of the email
-        html = self.format_html_link(videoId, title)
-        text = self.format_text_link(videoId)
+        html = self.format_html_link(video_id, title)
+        text = self.format_text_link(video_id)
 
-        # Create message container - the correct MIME type is multipart/alternative.
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = "New Episode of Zero Time Dilemma!"
-        msg['From'] = self.me
-        msg['To'] = self.destination
+        # Create the message type - will contain html with text backup
+        message = MIMEMultipart('alternative')
+        message['Subject'] = "New Episode of Zero Time Dilemma!"
+        message['From'] = self.me
+        message['To'] = self.destination
 
-        # Record the MIME types of both parts - text/plain and text/html.
-        part1 = MIMEText(text, 'plain')
-        part2 = MIMEText(html, 'html')
+        # Set the MIME types, plain text as a fallback, and ideally HTML
+        text_part = MIMEText(text, 'plain')
+        html_part = MIMEText(html, 'html')
+        message.attach(text_part)
+        message.attach(html_part)
 
-        # Attach parts into message container.
-        msg.attach(part1)
-        msg.attach(part2)
-
-        # Send the message via local SMTP server.
-        s = smtplib.SMTP('localhost')
-        s.sendmail(self.me, self.destination, msg.as_string())
-        s.quit()
+        # Send the message via local SMTP server - in practice Postfix send-only server
+        server = smtplib.SMTP('localhost')
+        server.sendmail(self.me, self.destination, message.as_string())
+        server.quit()
