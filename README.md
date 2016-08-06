@@ -1,0 +1,2 @@
+# youtube-notifier
+A small script which uses the Youtube Data API v3 to check if a new video from a particular series has been uploaded onto a specified youtube channel. The target is then notified by email which includes a link to the video along with the title. The script is designed to be run as a cronjob on a unix server but can be run manually anywhere, as long as a local SMTP server is set up.
